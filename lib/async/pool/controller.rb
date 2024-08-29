@@ -158,8 +158,6 @@ module Async
 			end
 			
 			def drain
-				Console.debug(self, "Draining pool...", size: @resources.size)
-				
 				# Enumerate all existing resources and retire them:
 				while resource = acquire_existing_resource
 					retire(resource)
@@ -210,9 +208,7 @@ module Async
 			end
 			
 			# Retire a specific resource.
-			def retire(resource)
-				Console.debug(self) {"Retire #{resource}"}
-				
+			def retire(resource)				
 				@resources.delete(resource)
 				
 				resource.close
@@ -266,8 +262,6 @@ module Async
 			# end
 			
 			def reuse(resource)
-				Console.debug(self) {"Reuse #{resource}"}
-				
 				usage = @resources[resource]
 				
 				if usage.nil? || usage.zero?
@@ -320,11 +314,7 @@ module Async
 			def available_resource
 				resource = nil
 				
-				Console.debug(self, "Acquiring concurrency guard...", blocking: @guard.blocking?)
-				
-				@guard.acquire do
-					Console.debug(self, "Acquired concurrency guard.")
-					
+				@guard.acquire do					
 					resource = acquire_or_create_resource
 				end
 				
@@ -376,8 +366,6 @@ module Async
 				end
 				
 				if @limit.nil? or @resources.size < @limit
-					Console.debug(self) {"No available resources, allocating new one..."}
-					
 					return create_resource
 				end
 			end
